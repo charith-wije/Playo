@@ -25,6 +25,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import StackNavigator from './navigation/StackNavigator';
 
 function Section({children, title}) {
   const isDarkMode = useColorScheme() === 'dark';
@@ -59,20 +60,7 @@ function App() {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <Ionicons name="search" size={24} color="grey" />
-      </ScrollView>
-    </SafeAreaView>
-  );
+  return <StackNavigator />;
 }
 
 const styles = StyleSheet.create({
