@@ -6,14 +6,68 @@ import {
   SafeAreaView,
   Pressable,
   ScrollView,
+  FlatList,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import Game from '../components/Game';
+import {AuthContext} from '../AuthContext';
+import UpcomingGame from '../components/UpcomingGame';
 
 const PlayScreen = () => {
   const [option, setOption] = useState('My Sports');
   const [sport, setSport] = useState('Badminton');
+  const navigation = useNavigation();
+  const [games, setGames] = useState([]);
+  const {userId} = useContext(AuthContext);
+  const [upcomingGames, setUpcomingGames] = useState([]);
+
+  useEffect(() => {
+    fetchGames();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (userId) {
+        fetchGames();
+      }
+    }, [userId]),
+  );
+
+  useEffect(() => {
+    if (userId) {
+      fetchUpcomingGames();
+    }
+  }, [userId]);
+
+  const fetchGames = async () => {
+    try {
+      const response = await axios.get(
+        `http://${Platform.OS === 'ios' ? 'localhost' : '10.0.2.2'}:8000/games`,
+      );
+      setGames(response.data);
+    } catch (error) {
+      console.log('Error', error);
+    }
+  };
+
+  const fetchUpcomingGames = async () => {
+    try {
+      const response = await axios.get(
+        `http://${
+          Platform.OS === 'ios' ? 'localhost' : '10.0.2.2'
+        }:8000/upcoming?userId=${userId}`,
+      );
+      setUpcomingGames(response.data);
+    } catch (error) {
+      console.log('Error', error.message);
+    }
+  };
+
+  console.log('UpcomingGames', upcomingGames);
 
   return (
     <SafeAreaView>
@@ -103,7 +157,10 @@ const PlayScreen = () => {
             </Pressable>
 
             <Pressable
-              onPress={() => setSport('Cricket')}
+              onPress={() => {
+                setSport('Cricket');
+                console.log('userId', userId);
+              }}
               style={{
                 paddingHorizontal: 10,
                 paddingVertical: 6,
@@ -170,8 +227,11 @@ const PlayScreen = () => {
           padding: 10,
           backgroundColor: 'white',
         }}>
-        <Pressable>
-          <Text>Create Game</Text>
+        <Pressable
+          onPress={() => {
+            navigation.navigate('Create');
+          }}>
+          <Text style={{fontWeight: 'bold'}}>Create Game</Text>
         </Pressable>
 
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
@@ -184,6 +244,23 @@ const PlayScreen = () => {
           </Pressable>
         </View>
       </View>
+      {option === 'My Sports' && (
+        <FlatList
+          data={games}
+          renderItem={({item}) => <Game item={item} />}
+          keyExtractor={item => item._id}
+          contentContainerStyle={{paddingBottom: 20}}
+        />
+      )}
+
+      {option === 'Calendar' && (
+        <FlatList
+          data={upcomingGames}
+          renderItem={({item}) => <UpcomingGame item={item} />}
+          keyExtractor={item => item._id}
+          contentContainerStyle={{paddingBottom: 20}}
+        />
+      )}
     </SafeAreaView>
   );
 };

@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
@@ -13,10 +13,26 @@ import BookScreen from '../screens/BookScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import VenueInfoScreen from '../screens/VenueInfoScreen';
+import StartScreen from '../screens/StartScreen';
+import LoginScreen from '../screens/LoginScreen';
+import RegisterScreen from '../screens/RegisterScreen';
+import PasswordScreen from '../screens/PasswordScreen';
+import OtpScreen from '../screens/OtpScreen';
+import NameScreen from '../screens/NameScreen';
+import SelectImage from '../screens/SelectImage';
+import PreFinalScreen from '../screens/PreFinalScreen';
+import {AuthContext} from '../AuthContext';
+import CreateActivity from '../screens/CreateActivity';
+import TagVenueScreen from '../screens/TagVenueScreen';
+import SelectTimeScreen from '../screens/SelectTimeScreen';
+import GameSetUpScreen from '../screens/GameSetUpScreen';
+import ManageRequestsScreen from '../screens/ManageRequestsScreen';
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
+
+  const {token} = useContext(AuthContext);
 
   function BottomTabs() {
     return (
@@ -81,7 +97,45 @@ const StackNavigator = () => {
   }
 
   const AuthStack = () => {
-    return <Stack.Navigator></Stack.Navigator>;
+    return (
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Start"
+          component={StartScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Password"
+          component={PasswordScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Name"
+          component={NameScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Image"
+          component={SelectImage}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="PreFinal"
+          component={PreFinalScreen}
+          options={{headerShown: false}}
+        />
+      </Stack.Navigator>
+    );
   };
 
   function MainStack() {
@@ -97,13 +151,36 @@ const StackNavigator = () => {
           component={VenueInfoScreen}
           options={{headerShown: false}}
         />
+        <Stack.Screen
+          name="Create"
+          component={CreateActivity}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="TagVenue"
+          component={TagVenueScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen name="Time" component={SelectTimeScreen} />
+        <Stack.Screen
+          name="Game"
+          component={GameSetUpScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Manage"
+          component={ManageRequestsScreen}
+          options={{headerShown: false}}
+        />
       </Stack.Navigator>
     );
   }
 
   return (
     <NavigationContainer>
-      <MainStack />
+      {/* <MainStack /> */}
+      {/* <AuthStack /> */}
+      {token === null || token === '' ? <AuthStack /> : <MainStack />}
     </NavigationContainer>
   );
 };

@@ -26,7 +26,12 @@ import {
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import StackNavigator from './navigation/StackNavigator';
+import {AuthProvider} from './AuthContext';
+import {ModalPortal} from 'react-native-modals';
+import {HomeProvider} from './HomeContext';
 
+const MoDB =
+  'mongodb+srv://charith:charith@cluster0.a4dzd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 function Section({children, title}) {
   const isDarkMode = useColorScheme() === 'dark';
   return (
@@ -60,7 +65,14 @@ function App() {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  return <StackNavigator />;
+  return (
+    <AuthProvider>
+      <HomeProvider>
+        <StackNavigator />
+        <ModalPortal />
+      </HomeProvider>
+    </AuthProvider>
+  );
 }
 
 const styles = StyleSheet.create({
